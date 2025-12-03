@@ -1,0 +1,100 @@
+/* frontend/src/Pages/Services/Services.css */
+
+.service-page {
+  min-height: 100vh;
+  padding: 60px 30px;
+  background: linear-gradient(to right, #f4f6f9, #e9eff5);
+  text-align: center;
+}
+
+.service-page h1 {
+  font-size: 38px;
+  margin-bottom: 50px;
+  color: #203a43;
+  position: relative;
+}
+
+.service-page h1::after {
+  content: "";
+  width: 120px;
+  height: 4px;
+  background: #00e5ff;
+  display: block;
+  margin: 10px auto 0;
+  border-radius: 2px;
+}
+
+/* GRID */
+.services-grid {
+  max-width: 1100px;
+  margin: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 30px;
+}
+
+/* CARD */
+.service-card {
+  background: white;
+  padding: 30px 22px;
+  border-radius: 14px;
+  box-shadow: 0px 8px 25px rgba(0, 0, 0, 0.1);
+  text-align: left;
+  transition: 0.3s;
+}
+
+.service-card:hover {
+  transform: translateY(-6px);
+}
+
+.service-card h3 {
+  color: #0f4c75;
+  margin-bottom: 12px;
+  font-size: 22px;
+}
+
+.price {
+  font-size: 18px;
+  font-weight: bold;
+  color: #00a8cc;
+  margin-bottom: 12px;
+}
+
+/* FEATURES */
+.service-card ul {
+  padding-left: 20px;
+  margin-bottom: 18px;
+}
+
+.service-card ul li {
+  font-size: 15px;
+  margin-bottom: 8px;
+  color: #444;
+  list-style-type: square;
+}
+
+.service-card ul li::marker {
+  color: #00e5ff;
+}
+
+/* BUTTON */
+.service-card button {
+  width: 100%;
+  padding: 10px;
+  background: #00e5ff;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.service-card button:hover {
+  opacity: 0.85;
+}
+
+/* MOBILE */
+@media (max-width: 600px) {
+  .service-page h1 {
+    font-size: 30px;
+  }
+}
