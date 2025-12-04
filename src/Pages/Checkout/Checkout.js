@@ -33,7 +33,7 @@ function CheckoutForm() {
     try {
       // ✅ Send dynamic amount to backend
       const res = await fetch(
-        "http://localhost:5000/api/payment/create-payment",
+        `${process.env.REACT_APP_API_BASE_URL}/api/payment/create-payment`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

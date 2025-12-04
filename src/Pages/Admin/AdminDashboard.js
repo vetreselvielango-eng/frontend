@@ -9,7 +9,7 @@ function AdminDashboard() {
 
   useEffect(() => {
     // ✅ Fetch ALL orders (admin)
-    fetch("http://localhost:5000/api/orders", {
+    fetch(`${process.env.REACT_APP_API_BASE_URL}/api/orders`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -18,7 +18,7 @@ function AdminDashboard() {
       .then((data) => setOrders(Array.isArray(data) ? data : []));
 
     // ✅ Fetch ALL bookings (admin)
-    fetch("http://localhost:5000/api/bookings/admin/all", {
+    fetch(`${process.env.REACT_APP_API_BASE_URL}/api/bookings/admin/all`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

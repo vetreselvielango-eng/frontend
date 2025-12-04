@@ -7,7 +7,7 @@ function Services() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/services")
+    fetch(`${process.env.REACT_APP_API_BASE_URL}/api/services`)
       .then((res) => res.json())
       .then((data) => setServices(data))
       .catch((err) => console.error("Service fetch failed", err));
