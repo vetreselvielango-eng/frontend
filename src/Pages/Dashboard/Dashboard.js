@@ -1,144 +1,128 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import "./Dashboard.css";
 
-function Dashboard() {
-  const user = JSON.parse(localStorage.getItem("user"));
-  const token = localStorage.getItem("token");
+const API_BASE_URL =
+  process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
 
+function Dashboard() {
   const [orders, setOrders] = useState([]);
   const [bookings, setBookings] = useState([]);
-  const [loadingOrders, setLoadingOrders] = useState(true);
-  const [loadingBookings, setLoadingBookings] = useState(true);
+  const [loading, setLoading] = useState(true);
 
-  // ✅ My Orders (Product Orders Only)
   useEffect(() => {
-    const fetchMyOrders = async () => {
-      try {
-        const res = await fetch(
-          "http://localhost:5000/api/orders/my-orders",
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        const data = await res.json();
-        setOrders(Array.isArray(data) ? data : []);
-      } catch (error) {
-        console.error("Fetch orders error:", error);
-        setOrders([]);
-      } finally {
-        setLoadingOrders(false);
-      }
-    };
-
-    if (token) {
-      fetchMyOrders();
-    } else {
-      setLoadingOrders(false);
-    }
-  }, [token]);
-
-  // ✅ My Bookings (Show all for now – no filter)
-  useEffect(() => {
-    const fetchBookings = async () => {
-      try {
-        const res = await fetch("http://localhost:5000/api/bookings");
-        const data = await res.json();
-        setBookings(Array.isArray(data) ? data : []);
-      } catch (error) {
-        console.error("Fetch bookings error:", error);
-        setBookings([]);
-      } finally {
-        setLoadingBookings(false);
-      }
-    };
-
-    fetchBookings();
+    fetchUserData();
   }, []);
+
+  const fetchUserData = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        alert("Please login to view dashboard");
+        return;
+      }
+
+      const headers = {
+        Authorization: `Bearer ${token}`,
+        "x-access-token": token,
+      };
+
+      // ✅ USER-ONLY ORDERS
+      const orderRes = await axios.get(
+        `${API_BASE_URL}/api/orders/my-orders`,
+        { headers }
+      );
+
+      // ✅ USER-ONLY BOOKINGS
+      const bookingRes = await axios.get(
+        `${API_BASE_URL}/api/bookings/my-bookings`,
+        { headers }
+      );
+
+      setOrders(orderRes.data || []);
+      setBookings(bookingRes.data || []);
+    } catch (error) {
+      console.error("❌ Dashboard fetch error:", error);
+      alert("Failed to load dashboard data");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return <p style={{ textAlign: "center" }}>Loading dashboard...</p>;
+  }
 
   return (
     <div className="dashboard-container">
-      <h2>Dashboard</h2>
+      <h1>My Dashboard</h1>
 
-      <div className="dashboard-card">
-        <p><b>Name:</b> {user?.name}</p>
-        <p><b>Email:</b> {user?.email}</p>
-      </div>
+      {/* ✅ ORDERS SECTION */}
+      <section className="dashboard-section">
+        <h2>My Orders</h2>
 
-      {/* ✅ MY ORDERS */}
-      <h3 style={{ marginTop: "20px" }}>My Orders</h3>
-
-      {loadingOrders ? (
-        <p>Loading orders...</p>
-      ) : orders.length === 0 ? (
-        <p>No orders found</p>
-      ) : (
-        <table className="orders-table">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Products</th>
-              <th>Total</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {orders.map((order, i) => (
-              <tr key={order._id}>
-                <td>{i + 1}</td>
-                <td>
-                  {order.items.map((item, idx) => (
-                    <div key={idx}>
-                      {item.name} × {item.quantity}
-                    </div>
-                  ))}
-                </td>
-                <td>${order.totalAmount}</td>
-                <td>{order.orderStatus}</td>
+        {orders.length === 0 ? (
+          <p>No orders found</p>
+        ) : (
+          <table className="dashboard-table">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Total</th>
+                <th>Payment</th>
+                <th>Status</th>
+                <th>Date</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+            </thead>
+            <tbody>
+              {orders.map((order) => (
+                <tr key={order._id}>
+                  <td>{order._id}</td>
+                  <td>${order.totalAmount}</td>
+                  <td>{order.paymentStatus}</td>
+                  <td>{order.status}</td>
+                  <td>
+                    {new Date(order.createdAt).toLocaleDateString()}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </section>
 
-      {/* ✅ MY BOOKINGS */}
-      <h3 style={{ marginTop: "40px" }}>My Bookings</h3>
+      {/* ✅ BOOKINGS SECTION */}
+      <section className="dashboard-section">
+        <h2>My Bookings</h2>
 
-      {loadingBookings ? (
-        <p>Loading bookings...</p>
-      ) : bookings.length === 0 ? (
-        <p>No bookings found</p>
-      ) : (
-        <table className="orders-table">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Service</th>
-              <th>Date</th>
-              <th>Days</th>
-              <th>Message</th>
-            </tr>
-          </thead>
-          <tbody>
-            {bookings.map((book, i) => (
-              <tr key={book._id}>
-                <td>{i + 1}</td>
-                <td>{book.name}</td>
-                <td>{book.email}</td>
-                <td>{book.service}</td>
-                <td>{book.date}</td>
-                <td>{book.days}</td>
-                <td>{book.message || "-"}</td>
+        {bookings.length === 0 ? (
+          <p>No bookings found</p>
+        ) : (
+          <table className="dashboard-table">
+            <thead>
+              <tr>
+                <th>Service</th>
+                <th>Date</th>
+                <th>Days</th>
+                <th>Status</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+            </thead>
+            <tbody>
+              {bookings.map((booking) => (
+                <tr key={booking._id}>
+                  <td>{booking.service}</td>
+                  <td>
+                    {new Date(booking.date).toLocaleDateString()}
+                  </td>
+                  <td>{booking.days}</td>
+                  <td>{booking.status || "Pending"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </section>
     </div>
   );
 }

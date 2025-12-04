@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 // Pages
 import Home from "./Pages/Home/Home";
@@ -15,14 +15,26 @@ import NotFoundPage from "./Pages/NotFoundPage";
 import Dashboard from "./Pages/Dashboard/Dashboard";
 import Checkout from "./Pages/Checkout/Checkout";
 import Success from "./Pages/Success/Success";
-
+import AdminDashboard from "./Pages/Admin/AdminDashboard";
+import Cancel from "./Pages/Cancel/Cancel";
 
 // Layout
 import Navbar from "./Components/Navbar/Navbar";
 import Footer from "./Components/Footer/Footer";
 
-// ✅ Protected Route (ONLY ONE IMPORT)
+// Protected Route
 import PrivateRoute from "./utils/PrivateRoute";
+
+// ✅ Admin Route
+const AdminRoute = ({ children }) => {
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  if (!user || !user.isAdmin) {
+    return <Navigate to="/login" />;
+  }
+
+  return children;
+};
 
 function App() {
   return (
@@ -30,7 +42,7 @@ function App() {
       <Navbar />
 
       <Routes>
-        {/* Public Routes */}
+        {/* ✅ PUBLIC ROUTES */}
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
@@ -38,11 +50,10 @@ function App() {
         <Route path="/products" element={<Products />} />
         <Route path="/services" element={<Services />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/cart" element={<Cart />} />
-        <Route path="/checkout" element={<Checkout />} />
         <Route path="/success" element={<Success />} />
+        <Route path="/cancel" element={<Cancel />} />
 
-        {/* ✅ Protected Routes */}
+        {/* ✅ PROTECTED USER ROUTES */}
         <Route
           path="/dashboard"
           element={
@@ -70,7 +81,26 @@ function App() {
           }
         />
 
-        {/* 404 */}
+        <Route
+          path="/checkout"
+          element={
+            <PrivateRoute>
+              <Checkout />
+            </PrivateRoute>
+          }
+        />
+
+        {/* ✅ ADMIN ONLY ROUTE */}
+        <Route
+          path="/admin"
+          element={
+            <AdminRoute>
+              <AdminDashboard />
+            </AdminRoute>
+          }
+        />
+
+        {/* ✅ 404 */}
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
 

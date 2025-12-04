@@ -1,141 +1,137 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import "./Cart.css";
 
-function Cart() {
-  const [cart, setCart] = useState([]);
-  const token = localStorage.getItem("token");
+// ✅ API Base URL
+const API_BASE_URL =
+  process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
 
+console.log("✅ API BASE:", API_BASE_URL);
+
+function Cart() {
+  const [cartItems, setCartItems] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  // ✅ Load cart from localStorage
   useEffect(() => {
     const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
-    setCart(storedCart);
+    setCartItems(storedCart);
   }, []);
 
-  const increaseQty = (id) => {
-    const updatedCart = cart.map((item) =>
-      item._id === id ? { ...item, qty: item.qty + 1 } : item
+  // ✅ Calculate total
+  const getTotal = () => {
+    return cartItems.reduce(
+      (sum, item) => sum + (item.price || 0) * (item.quantity || 1),
+      0
     );
-    setCart(updatedCart);
-    localStorage.setItem("cart", JSON.stringify(updatedCart));
   };
 
-  const decreaseQty = (id) => {
-    const updatedCart = cart
-      .map((item) =>
-        item._id === id ? { ...item, qty: item.qty - 1 } : item
-      )
-      .filter((item) => item.qty > 0);
-
-    setCart(updatedCart);
-    localStorage.setItem("cart", JSON.stringify(updatedCart));
-  };
-
-  const removeItem = (id) => {
-    const updatedCart = cart.filter((item) => item._id !== id);
-    setCart(updatedCart);
-    localStorage.setItem("cart", JSON.stringify(updatedCart));
-  };
-
-  const clearCart = () => {
-    localStorage.removeItem("cart");
-    setCart([]);
-  };
-
-  const totalAmount = cart.reduce(
-    (total, item) => total + item.price * item.qty,
-    0
-  );
-
-  // ✅ DUMMY PAYMENT → CREATE REAL ORDER
-  const handlePayment = async () => {
-    if (cart.length === 0) {
-      alert("Your cart is empty");
-      return;
-    }
-
-    if (!token) {
-      alert("Please login to continue payment");
-      return;
-    }
-
-    const orderData = {
-      items: cart.map((item) => ({
-        productId: item._id,
-        name: item.name,
-        price: item.price,
-        quantity: item.qty,
-        image: item.image,
-      })),
-      totalAmount,
-      paymentMethod: "DUMMY",
-      paymentStatus: "Paid",
-      orderStatus: "Placed",
-    };
-
+  // ✅ Stripe Checkout Handler (NEW FLOW)
+  const handleStripeCheckout = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/orders", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(orderData),
-      });
+      setLoading(true);
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        alert(data.message || "Payment failed");
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("Please login to continue checkout");
+        setLoading(false);
         return;
       }
 
-      alert("✅ Payment successful & Order created");
-      clearCart();
+      if (!cartItems.length) {
+        alert("Your cart is empty");
+        setLoading(false);
+        return;
+      }
+
+      // ✅ SAFE productId mapping
+      const itemsForBackend = cartItems.map((item) => ({
+        productId: item._id || item.id || item.productId,
+        quantity: item.quantity || 1,
+      }));
+
+      console.log("✅ Sending to backend:", itemsForBackend);
+
+      const response = await axios.post(
+        `${API_BASE_URL}/api/checkout/create-session`,
+        { items: itemsForBackend },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+            "x-access-token": token,
+          },
+        }
+      );
+
+      console.log("✅ Stripe backend response:", response.data);
+
+      const sessionUrl = response.data?.url;
+
+      if (!sessionUrl) {
+        alert("Stripe session URL not received");
+        setLoading(false);
+        return;
+      }
+
+      // ✅ NEW STRIPE REDIRECT METHOD (NO Stripe.js redirect)
+      window.location.href = sessionUrl;
     } catch (error) {
-      console.error("Payment Error:", error);
-      alert("Server error during payment");
+      console.error("❌ Stripe checkout error FULL:", error);
+      console.error("❌ Stripe backend response:", error.response?.data);
+
+      alert(
+        error.response?.data?.message ||
+          "Stripe session failed — check backend logs"
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
-  return (
-    <div className="cart-container">
-      <h2 className="cart-title">Your Cart</h2>
+  // ✅ Remove item from cart
+  const removeItem = (index) => {
+    const updated = [...cartItems];
+    updated.splice(index, 1);
+    setCartItems(updated);
+    localStorage.setItem("cart", JSON.stringify(updated));
+  };
 
-      {cart.length === 0 ? (
-        <p className="cart-empty">Cart is Empty 🛒</p>
+  return (
+    <div className="cart-page">
+      <h1>Your Cart</h1>
+
+      {cartItems.length === 0 ? (
+        <p>Your cart is empty.</p>
       ) : (
         <>
-          {cart.map((item) => (
-            <div className="cart-item" key={item._id}>
-              <div className="cart-item-left">
-                <img
-                  src={item.image}
-                  alt={item.name}
-                  className="cart-item-img"
-                />
-                <div>
-                  <p className="cart-item-name">{item.name}</p>
-                  <p className="cart-item-price">${item.price}</p>
-                  <p>Qty: {item.qty}</p>
+          <div className="cart-items">
+            {cartItems.map((item, index) => (
+              <div className="cart-item" key={index}>
+                <img src={item.image} alt={item.name} />
+                <div className="cart-info">
+                  <h3>{item.name}</h3>
+                  <p>${item.price}</p>
+                  <p>Qty: {item.quantity || 1}</p>
                 </div>
+                <button
+                  className="remove-btn"
+                  onClick={() => removeItem(index)}
+                >
+                  Remove
+                </button>
               </div>
-
-              <div className="cart-actions">
-                <button onClick={() => increaseQty(item._id)}>+</button>
-                <button onClick={() => decreaseQty(item._id)}>-</button>
-                <button onClick={() => removeItem(item._id)}>Remove</button>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
 
           <div className="cart-summary">
-            <p className="cart-total">Total: ${totalAmount}</p>
-
-            <button className="cart-clear-btn" onClick={clearCart}>
-              Clear Cart
-            </button>
-
-            <button className="cart-payment-btn" onClick={handlePayment}>
-              Pay Now (Dummy)
+            <h2>Total: ${getTotal().toFixed(2)}</h2>
+            <button
+              className="pay-button"
+              onClick={handleStripeCheckout}
+              disabled={loading || cartItems.length === 0}
+            >
+              {loading ? "Redirecting to Stripe..." : "Pay with Stripe"}
             </button>
           </div>
         </>
