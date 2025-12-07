@@ -1,11 +1,11 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../../App";   // ✅ GLOBAL CONTEXT
+import { AuthContext } from "../../App";
+import "./Login.css";
 
 function Login() {
   const navigate = useNavigate();
 
-  // ✅ GLOBAL CONTEXT SETTERS (for instant Navbar update)
   const { setToken, setUser } = useContext(AuthContext);
 
   const emailRef = useRef(null);
@@ -15,7 +15,6 @@ function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  // ✅ Auto-focus email on page load
   useEffect(() => {
     emailRef.current?.focus();
   }, []);
@@ -32,9 +31,7 @@ function Login() {
         `${process.env.REACT_APP_API_BASE_URL}/api/auth/login`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             email: enteredEmail,
             password: enteredPassword,
@@ -44,21 +41,17 @@ function Login() {
 
       const data = await res.json();
 
-      // ❌ If login failed
       if (!res.ok) {
         setError(data.message || "Login failed");
         return;
       }
 
-      // ✅ SAVE TO localStorage
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
 
-      // ✅ UPDATE GLOBAL CONTEXT (FIXES NAVBAR REFRESH ISSUE)
       setToken(data.token);
       setUser(data.user);
 
-      // ✅ Redirect to dashboard
       navigate("/dashboard");
     } catch (err) {
       setError("Server error. Try again.");
@@ -66,27 +59,25 @@ function Login() {
   };
 
   return (
-    <div style={{ padding: "40px", maxWidth: "400px", margin: "auto" }}>
-      <h2>Login</h2>
+    <div className="login-page">
+      <h2 className="login-title">Login</h2>
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && <p className="login-error">{error}</p>}
 
-      <form onSubmit={handleSubmit}>
-        <div>
+      <form className="login-form" onSubmit={handleSubmit}>
+        <div className="form-group">
           <label>Email</label>
-          <br />
           <input
             type="email"
-            ref={emailRef}   // ✅ Auto-focus + useRef
+            ref={emailRef}
             value={email}
             required
             onChange={(e) => setEmail(e.target.value)}
           />
         </div>
 
-        <div style={{ marginTop: "10px" }}>
+        <div className="form-group">
           <label>Password</label>
-          <br />
           <input
             type="password"
             ref={passwordRef}
@@ -96,7 +87,7 @@ function Login() {
           />
         </div>
 
-        <button style={{ marginTop: "15px" }} type="submit">
+        <button type="submit" className="login-btn">
           Login
         </button>
       </form>

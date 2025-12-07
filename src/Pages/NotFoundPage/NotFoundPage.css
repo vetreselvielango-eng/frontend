@@ -1,0 +1,33 @@
+.notfound-container {
+    min-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .notfound-title {
+    font-size: 80px;
+    color: #2563eb;
+    margin-bottom: 10px;
+  }
+  
+  .notfound-text {
+    font-size: 20px;
+    color: #444;
+    margin-bottom: 20px;
+  }
+  
+  .notfound-link {
+    text-decoration: none;
+    padding: 10px 18px;
+    background: black;
+    color: white;
+    border-radius: 6px;
+  }
+  
+  .notfound-link:hover {
+    background: #333;
+  }
+  

@@ -1,8 +1,33 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import "./Home.css";
 
+// ✅ Import your background audio
+import bgMusic from "../../assets/audio/Welcome to VR World.mp3";
+
 function Home() {
+  const audioRef = useRef(null);
+
+  // ✅ Play music ONCE on Home load & stop on exit
+  useEffect(() => {
+    audioRef.current = new Audio(bgMusic);
+    audioRef.current.volume = 0.4;   // soft background volume
+    audioRef.current.loop = false;   // ✅ PLAY ONLY ONCE
+
+    // Try to autoplay (browser may require user interaction)
+    audioRef.current.play().catch(() => {
+      console.log("Autoplay blocked by browser. User interaction required.");
+    });
+
+    // ✅ Stop music when leaving Home page
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+      }
+    };
+  }, []);
+
   return (
     <div className="home">
 

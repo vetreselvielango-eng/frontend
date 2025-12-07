@@ -25,6 +25,12 @@
   object-fit: cover;
 }
 
+.cart-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
 .cart-summary {
   margin-top: 24px;
   text-align: right;

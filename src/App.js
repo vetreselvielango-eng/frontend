@@ -11,7 +11,7 @@ import Login from "./Pages/Login/Login";
 import Products from "./Pages/Products/Products";
 import Services from "./Pages/Services/Services";
 import Signup from "./Pages/Signup/Signup";
-import NotFoundPage from "./Pages/NotFoundPage";
+import NotFoundPage from "./Pages/NotFoundPage/NotFoundPage";
 import Dashboard from "./Pages/Dashboard/Dashboard";
 import Checkout from "./Pages/Checkout/Checkout";
 import Success from "./Pages/Success/Success";

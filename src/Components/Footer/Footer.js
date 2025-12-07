@@ -32,10 +32,10 @@ function Footer() {
         {/* SERVICES */}
         <div className="footer-section">
           <h3>Our Services</h3>
+          <p>Corporate Events</p>
+          <p>Gaming Zone Setup</p>
+          <p>Wedding VR Booth</p>
           <p>VR Headset Rentals</p>
-          <p>Corporate VR Events</p>
-          <p>VR Gaming Zones</p>
-          <p>Product Launch VR Demos</p>
         </div>
 
         {/* CONTACT */}

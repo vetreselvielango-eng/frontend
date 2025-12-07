@@ -113,17 +113,25 @@
   line-height: 1.7;
 }
 
-/* CTA */
+/* CTA — FIXED OVERLAP */
 .cta {
   background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
   color: white;
   text-align: center;
-  padding: 60px 30px;
+  padding: 80px 30px;          /* ✅ More vertical space */
+  display: flex;              /* ✅ Forces vertical stacking */
+  flex-direction: column;     /* ✅ Stacks h2, p, button */
+  align-items: center;        /* ✅ Centers horizontally */
+  gap: 18px;                  /* ✅ Creates spacing (prevents overlap) */
 }
 
 .cta h2 {
   color: #00e5ff;
-  margin-bottom: 15px;
+  margin-bottom: 0;           /* ✅ Remove conflicting margins */
+}
+
+.cta p {
+  margin: 0;
 }
 
 /* MOBILE */
