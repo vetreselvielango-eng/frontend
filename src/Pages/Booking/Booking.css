@@ -1,45 +1,120 @@
-.booking-container {
-  max-width: 500px;
-  margin: auto;
-  padding: 30px;
+/* ✅ Global Box Fix */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
+/* ✅ Light Neutral Page Background (Professional Look) */
+body {
+  margin: 0;
+  background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+  font-family: Arial, sans-serif;
+}
+
+/* ✅ Booking Card Container */
+.booking-container {
+  width: 100%;
+  max-width: 450px;
+  margin: 90px auto;
+  padding: 34px 28px;
+  background: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+  animation: fadeIn 0.45s ease-in-out;
+}
+
+/* ✅ Heading */
 .booking-container h2 {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 26px;
+  color: #111827;
+  font-size: 1.6rem;
+  font-weight: 700;
 }
 
-.booking-form {
-  display: flex;
-  flex-direction: column;
-}
-
-.booking-form input,
-.booking-form textarea {
+/* ✅ Input Fields */
+.booking-container input {
   width: 100%;
-  padding: 10px;
-  margin-bottom: 12px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  font-size: 14px;
+  padding: 14px 16px;
+  margin-bottom: 18px;
+  border-radius: 10px;
+  border: 1.5px solid #d1d5db;
+  font-size: 1rem;
+  outline: none;
+  background: #f9fafb;
+  transition: border 0.25s, box-shadow 0.25s;
 }
 
-.booking-form textarea {
-  min-height: 90px;
-  resize: vertical;
+/* ✅ Readonly Service Field */
+.booking-container input[readonly] {
+  background: #f1f5f9;
+  color: #334155;
+  font-weight: 600;
 }
 
-.booking-form button {
+/* ✅ Focus Effect (Soft Blue) */
+.booking-container input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18);
+  background: #ffffff;
+}
+
+/* ✅ Button (Soft Blue – Works on all pages) */
+.booking-container button {
   width: 100%;
-  padding: 12px;
-  background: black;
-  color: white;
+  padding: 14px;
+  background: linear-gradient(135deg, #3b82f6, #60a5fa);
+  color: #ffffff;
   border: none;
+  border-radius: 10px;
+  font-size: 1.05rem;
+  font-weight: 600;
   cursor: pointer;
-  border-radius: 5px;
-  font-size: 15px;
+  margin-top: 10px;
+  transition: transform 0.1s, box-shadow 0.2s;
 }
 
-.booking-form button:hover {
-  background: #333;
+.booking-container button:hover {
+  box-shadow: 0 8px 18px rgba(59, 130, 246, 0.35);
+  transform: translateY(-1px);
+}
+
+.booking-container button:active {
+  transform: scale(0.97);
+}
+
+/* ✅ Disabled State */
+.booking-container button:disabled {
+  background: #c7d2fe;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* ✅ Fade Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ✅ Mobile Responsive */
+@media (max-width: 480px) {
+  .booking-container {
+    margin: 60px 14px;
+    padding: 26px 18px;
+  }
+
+  .booking-container h2 {
+    font-size: 1.4rem;
+  }
+
+  .booking-container button {
+    font-size: 0.95rem;
+  }
 }

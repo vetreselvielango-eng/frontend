@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import "./Contact.css";
 
 function Contact() {
@@ -10,6 +10,11 @@ function Contact() {
 
   const [loading, setLoading] = useState(false);
 
+  // ✅ useRef added (no behavior change)
+  const nameRef = useRef(null);
+  const emailRef = useRef(null);
+  const messageRef = useRef(null);
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -20,13 +25,16 @@ function Contact() {
     try {
       setLoading(true);
 
-      const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/contact`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+      const res = await fetch(
+        `${process.env.REACT_APP_API_BASE_URL}/api/contact`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
 
       const data = await res.json();
 
@@ -56,6 +64,7 @@ function Contact() {
           value={formData.name}
           onChange={handleChange}
           required
+          ref={nameRef}        // ✅ useRef attached
         />
 
         <input
@@ -65,6 +74,7 @@ function Contact() {
           value={formData.email}
           onChange={handleChange}
           required
+          ref={emailRef}       // ✅ useRef attached
         />
 
         <textarea
@@ -74,6 +84,7 @@ function Contact() {
           value={formData.message}
           onChange={handleChange}
           required
+          ref={messageRef}     // ✅ useRef attached
         ></textarea>
 
         <button type="submit" disabled={loading}>
@@ -85,3 +96,92 @@ function Contact() {
 }
 
 export default Contact;
+
+
+// import React, { useState } from "react";
+// import "./Contact.css";
+
+// function Contact() {
+//   const [formData, setFormData] = useState({
+//     name: "",
+//     email: "",
+//     message: "",
+//   });
+
+//   const [loading, setLoading] = useState(false);
+
+//   const handleChange = (e) => {
+//     setFormData({ ...formData, [e.target.name]: e.target.value });
+//   };
+
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+
+//     try {
+//       setLoading(true);
+
+//       const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/contact`, {
+//         method: "POST",
+//         headers: {
+//           "Content-Type": "application/json",
+//         },
+//         body: JSON.stringify(formData),
+//       });
+
+//       const data = await res.json();
+
+//       if (!res.ok) {
+//         alert("Failed to send message");
+//         return;
+//       }
+
+//       alert("✅ Message Sent Successfully");
+//       setFormData({ name: "", email: "", message: "" });
+//     } catch (error) {
+//       alert("Server connection failed");
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   return (
+//     <div className="contact-container">
+//       <h2 className="contact-title">Contact Us</h2>
+
+//       <form className="contact-form" onSubmit={handleSubmit}>
+//         <input
+//           type="text"
+//           name="name"
+//           placeholder="Your Name"
+//           value={formData.name}
+//           onChange={handleChange}
+//           required
+//         />
+
+//         <input
+//           type="email"
+//           name="email"
+//           placeholder="Your Email"
+//           value={formData.email}
+//           onChange={handleChange}
+//           required
+//         />
+
+//         <textarea
+//           name="message"
+//           placeholder="Your Message"
+//           rows="4"
+//           value={formData.message}
+//           onChange={handleChange}
+//           required
+//         ></textarea>
+
+//         <button type="submit" disabled={loading}>
+//           {loading ? "Sending..." : "Send Message"}
+//         </button>
+//       </form>
+//     </div>
+//   );
+// }
+
+// export default Contact;

@@ -1,28 +1,46 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../App";   // ✅ GLOBAL CONTEXT
 
 function Login() {
   const navigate = useNavigate();
+
+  // ✅ GLOBAL CONTEXT SETTERS (for instant Navbar update)
+  const { setToken, setUser } = useContext(AuthContext);
+
+  const emailRef = useRef(null);
+  const passwordRef = useRef(null);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
+  // ✅ Auto-focus email on page load
+  useEffect(() => {
+    emailRef.current?.focus();
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
+    const enteredEmail = emailRef.current.value;
+    const enteredPassword = passwordRef.current.value;
+
     try {
-      const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/api/auth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-      });
+      const res = await fetch(
+        `${process.env.REACT_APP_API_BASE_URL}/api/auth/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: enteredEmail,
+            password: enteredPassword,
+          }),
+        }
+      );
 
       const data = await res.json();
 
@@ -32,9 +50,13 @@ function Login() {
         return;
       }
 
-      // ✅ SUCCESS — SAVE TOKEN + USER
+      // ✅ SAVE TO localStorage
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
+
+      // ✅ UPDATE GLOBAL CONTEXT (FIXES NAVBAR REFRESH ISSUE)
+      setToken(data.token);
+      setUser(data.user);
 
       // ✅ Redirect to dashboard
       navigate("/dashboard");
@@ -55,6 +77,7 @@ function Login() {
           <br />
           <input
             type="email"
+            ref={emailRef}   // ✅ Auto-focus + useRef
             value={email}
             required
             onChange={(e) => setEmail(e.target.value)}
@@ -66,6 +89,7 @@ function Login() {
           <br />
           <input
             type="password"
+            ref={passwordRef}
             value={password}
             required
             onChange={(e) => setPassword(e.target.value)}

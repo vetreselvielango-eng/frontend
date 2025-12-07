@@ -27,7 +27,7 @@
   .contact-form button {
     padding: 10px;
     border: none;
-    background: black;
+    background: linear-gradient(135deg, #3b82f6, #60a5fa);
     color: white;
     cursor: pointer;
     border-radius: 6px;

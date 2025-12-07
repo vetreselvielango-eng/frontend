@@ -1,0 +1,136 @@
+/* ✅ Global Box Fix */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* ✅ Page Background */
+body {
+  margin: 0;
+  background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+  font-family: Arial, sans-serif;
+}
+
+/* ✅ Main Dashboard Container */
+.dashboard-container {
+  width: 95%;
+  max-width: 1200px;
+  margin: 50px auto;
+  padding: 30px 26px;
+  background: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+}
+
+/* ✅ Main Heading */
+.dashboard-container h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #111827;
+  font-size: 1.9rem;
+  font-weight: 700;
+}
+
+/* ✅ Section Headings */
+.dashboard-container h3 {
+  margin: 25px 0 15px;
+  color: #1f2937;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+/* ✅ Table Wrapper for Mobile Scroll */
+.dashboard-container .orders-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #ffffff;
+  overflow-x: auto;
+}
+
+/* ✅ Table Header */
+.orders-table thead {
+  background: #f1f5f9;
+}
+
+.orders-table th {
+  padding: 14px 12px;
+  text-align: left;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1f2937;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+/* ✅ Table Rows */
+.orders-table td {
+  padding: 12px 12px;
+  font-size: 0.95rem;
+  color: #374151;
+  border-bottom: 1px solid #e5e7eb;
+  vertical-align: top;
+}
+
+/* ✅ Zebra Striping */
+.orders-table tbody tr:nth-child(even) {
+  background: #f9fafb;
+}
+
+/* ✅ Hover Effect */
+.orders-table tbody tr:hover {
+  background: #eef2ff;
+  transition: background 0.2s ease-in-out;
+}
+
+/* ✅ Product Item Layout */
+.orders-table td div {
+  margin-bottom: 4px;
+  font-size: 0.9rem;
+}
+
+/* ✅ Status Highlight (Optional – auto colors based on text) */
+.orders-table td:last-child {
+  font-weight: 600;
+}
+
+/* ✅ Currency Style */
+.orders-table td:nth-child(4) {
+  font-weight: 700;
+  color: #2563eb;
+}
+
+/* ✅ Empty State (if no data later) */
+.orders-table tbody tr td {
+  line-height: 1.4;
+}
+
+/* ✅ Mobile Responsive */
+@media (max-width: 768px) {
+  .dashboard-container {
+    margin: 30px 12px;
+    padding: 22px 16px;
+  }
+
+  .dashboard-container h2 {
+    font-size: 1.6rem;
+  }
+
+  .dashboard-container h3 {
+    font-size: 1.15rem;
+  }
+
+  .orders-table th,
+  .orders-table td {
+    font-size: 0.85rem;
+    padding: 10px 8px;
+  }
+}
+
+/* ✅ Extra Small Screens */
+@media (max-width: 480px) {
+  .orders-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}
