@@ -3,11 +3,11 @@ import { useNavigate } from "react-router-dom";
 import "./Services.css";
 
 function Services() {
-  const [services, setServices] = useState([]);
+  const [services, setServices] = useState([]); //State – Where backend data is stored
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_API_BASE_URL}/api/services`)
+    fetch(`${process.env.REACT_APP_API_BASE_URL}/api/services`)  //Fetches data from backend
       .then((res) => res.json())
       .then((data) => setServices(data))
       .catch((err) => console.error("Service fetch failed", err));
