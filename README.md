@@ -20,9 +20,10 @@ It provides the user interface for browsing VR products & services, booking, car
 
 Create a `.env` file in the **frontend root**:
 
-```env
+```
 REACT_APP_API_BASE_URL=http://localhost:5000
 REACT_APP_STRIPE_PUBLISHABLE_KEY=your_publishable_key_here
+```
 
 ▶️ How to Run Frontend
 
